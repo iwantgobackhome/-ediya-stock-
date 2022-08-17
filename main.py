@@ -1,3 +1,5 @@
+import _tkinter
+
 import pandas
 from tkinter import *
 from tkinter import messagebox
@@ -18,7 +20,7 @@ def update_click():
                 index_num = "no_data"
         if index_num != "no_data":
             data.loc[index_num, '개수'] = count_entry.get()
-            list_box.delete(0.0, END)
+            list_box.delete(0, END)
             print_list_box()
             data.to_csv("stock.csv", index=None)
             sold_out_print()
@@ -49,7 +51,7 @@ def print_list_box():
 # search_fun
 def search_click():
     search_check = False
-    list_box.delete(0.0, END)
+    list_box.delete(0, END)
     for key, value in data.iterrows():
         if ingredient_entry.get() in value["재료이름"]:
             list_box.insert(END, f"{value['재료위치']}    {value['개수']}    {value['재료이름']}\n")
@@ -63,8 +65,8 @@ def search_click():
 # sold_out_fun
 def sold_out_print():
     try:
-        sold_out_list.delete(0.0, END)
-        sold_out_list.insert(0.0, "              [품절 항목]\n\n\n")
+        sold_out_list.delete(0, END)
+        sold_out_list.insert(0, "                           [품절 항목]")
         for key, value in data.iterrows():
             if float(value["개수"]) == 0 and value["재료위치"] == "냉장":
                 sold_out_list.insert(END, f"{value['재료위치']}    {value['개수']}   {value['재료이름']}\n")
@@ -87,7 +89,7 @@ def add_click():
     try:
         ingredient = ingredient_entry.get()
         count = count_entry.get()
-        float(count_entry.get())
+        float(count)
         position = position_entry.get()
         new_index = len(data)
         if len(ingredient) <= 0 or len(count) <= 0 or len(position) <= 0:
@@ -97,7 +99,7 @@ def add_click():
                                                              f"정말로 이대로 추가 하시겠습니까?"):
                 data.loc[new_index] = [ingredient, count, position]
                 data.to_csv("stock.csv", index=None)
-                list_box.delete(0.0, END)
+                list_box.delete(0, END)
                 print_list_box()
                 sold_out_print()
                 ingredient_entry.delete(0, END)
@@ -118,7 +120,7 @@ def delete_click():
                 break
         if messagebox.askokcancel(title="메뉴삭제", message=f"재료이름: {ingredient}를(을) 정말로 삭제하시겠습니까?"):
             data.drop(delete_key, axis=0, inplace=True)
-            list_box.delete(0.0, END)
+            list_box.delete(0, END)
             data.to_csv("stock.csv", index=None)
             print_list_box()
             sold_out_print()
@@ -127,14 +129,48 @@ def delete_click():
         messagebox.showerror(title="Error", message="입력하신 재료이름의 값이 잘못되었습니다.")
 
 
+# click_list_box
+def click_list_box(event):
+    try:
+        index_num = list_box.curselection()
+        menu = list_box.get(index_num).strip().split("    ")
+        ingredient = menu[2].strip()
+        count = menu[1]
+
+        ingredient_entry.delete(0, END)
+        count_entry.delete(0, END)
+
+        ingredient_entry.insert(0, ingredient)
+        count_entry.insert(0, count)
+    except _tkinter.TclError:
+        pass
+
+
+def click_sold_out(event):
+    try:
+        index_num = sold_out_list.curselection()
+        menu = sold_out_list.get(index_num).strip().split("   ")
+        ingredient = menu[2]
+        count = menu[1].strip()
+
+        ingredient_entry.delete(0, END)
+        count_entry.delete(0, END)
+
+        ingredient_entry.insert(0, ingredient)
+        count_entry.insert(0, count)
+    except _tkinter.TclError:
+        pass
+
+
 # information_fun
 def information_click():
-    messagebox.showinfo(title="Information", message="개발자: 김도완 \n개발버전: 1.0 \n개발일자: 2022.06.26")
+    messagebox.showinfo(title="Information", message="개발자: 김도완 \n개발버전: 2.0 \n개발일자: 2022.06.26 (1.0)"
+                                                     "\n업데이트 일자: 2022.08.18 (2.0)")
 
 
 # base window
 window = Tk()
-window.title("이디야 재고 관리 ver 1.0")
+window.title("이디야 재고 관리 ver 2.0")
 window.geometry("900x400")
 window.iconbitmap("logo.ico")
 
@@ -188,14 +224,25 @@ delete_button = Button(text="삭제", bg="white", command=delete_click)
 delete_button.place(x=220, y=150)
 
 # text
-list_box = Text(width=40)
-list_box.place(x=300, y=50)
+list_frame = Frame()        # 프레임 생성
+list_scroll = Scrollbar(list_frame, width=20)     # 스크롤 바 생성
+list_scroll.pack(side="right", fill="y")
+list_box = Listbox(list_frame, width=40, height=20, yscrollcommand=list_scroll.set)
+list_box.pack()
 print_list_box()
+list_scroll["command"] = list_box.yview     # 이거까지 해줘야 작동
+list_frame.place(x=300, y=50)
+list_box.bind('<Double-Button-1>', click_list_box)
 
-sold_out_list = Text(width=40)
-sold_out_list.place(x=600, y=50)
+sold_out_frame = Frame()
+sold_out_scroll = Scrollbar(sold_out_frame, width=20)
+sold_out_scroll.pack(side="right", fill="y")
+sold_out_list = Listbox(sold_out_frame, width=40, height=20, yscrollcommand=sold_out_scroll.set)
+sold_out_list.pack()
 sold_out_print()
-
+sold_out_scroll["command"] = sold_out_list.yview
+sold_out_frame.place(x=600, y=50)
+sold_out_list.bind('<Double-Button-1>', click_sold_out)
 
 # explain
 explain_text = Text(width=36, height=10)
