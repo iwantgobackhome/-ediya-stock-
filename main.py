@@ -32,6 +32,11 @@ def update_click():
         messagebox.showerror(title="오류", message="개수에 숫자를 입력해주세요.")
 
 
+# enter count_entry
+def enter_count_entry(event):
+    update_click()
+
+
 # list_box print
 def print_list_box():
     for key, value in data.iterrows():
@@ -60,6 +65,11 @@ def search_click():
         messagebox.showerror(title="존재하지 않는 이름", message="존재하지 않는 이름을 입력하셨습니다. \n다시 한 번 확인해주세요.")
         print_list_box()
     ingredient_entry.delete(0, END)
+
+
+# enter search
+def enter_ingredient_entry(event):
+    search_click()
 
 
 # sold_out_fun
@@ -146,6 +156,7 @@ def click_list_box(event):
         pass
 
 
+# click_sold_out
 def click_sold_out(event):
     try:
         index_num = sold_out_list.curselection()
@@ -195,6 +206,7 @@ ingredient_name.place(x=0, y=50)
 ingredient_entry = Entry()
 ingredient_entry.place(x=70, y=52)
 ingredient_entry.focus()
+ingredient_entry.bind("<Return>", enter_ingredient_entry)
 
 # count
 count_label = Label(text="개수:", font=("명조", 10, "bold"))
@@ -202,6 +214,7 @@ count_label.place(x=0, y=100)
 
 count_entry = Entry()
 count_entry.place(x=70, y=102)
+count_entry.bind("<Return>", enter_count_entry)
 
 # position
 position_label = Label(text="재료위치:", font=("명조", 10, "bold"))
@@ -232,7 +245,7 @@ list_box.pack()
 print_list_box()
 list_scroll["command"] = list_box.yview     # 이거까지 해줘야 작동
 list_frame.place(x=300, y=50)
-list_box.bind('<Double-Button-1>', click_list_box)
+list_box.bind('<ButtonRelease-1>', click_list_box)
 
 sold_out_frame = Frame()
 sold_out_scroll = Scrollbar(sold_out_frame, width=20)
@@ -242,7 +255,7 @@ sold_out_list.pack()
 sold_out_print()
 sold_out_scroll["command"] = sold_out_list.yview
 sold_out_frame.place(x=600, y=50)
-sold_out_list.bind('<Double-Button-1>', click_sold_out)
+sold_out_list.bind('<ButtonRelease-1>', click_sold_out)
 
 # explain
 explain_text = Text(width=36, height=10)
