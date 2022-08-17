@@ -175,6 +175,8 @@ def click_list_box(event):
 
         ingredient_entry.delete(0, END)
         count_entry.delete(0, END)
+        ingredient_entry.config(fg="black")
+        count_entry.config(fg="black")
 
         ingredient_entry.insert(0, ingredient)
         count_entry.insert(0, count)
@@ -193,6 +195,8 @@ def click_sold_out(event):
 
             ingredient_entry.delete(0, END)
             count_entry.delete(0, END)
+            ingredient_entry.config(fg="black")
+            count_entry.config(fg="black")
 
             ingredient_entry.insert(0, ingredient)
             count_entry.insert(0, count)
@@ -210,6 +214,8 @@ def click_under_3(event):
 
             ingredient_entry.delete(0, END)
             count_entry.delete(0, END)
+            ingredient_entry.config(fg="black")
+            count_entry.config(fg="black")
 
             ingredient_entry.insert(0, ingredient)
             count_entry.insert(0, count)
@@ -221,6 +227,43 @@ def click_under_3(event):
 def information_click():
     messagebox.showinfo(title="Information", message="개발자: 김도완 \n개발버전: 2.0 \n개발일자: 2022.06.26 (ver 1.0)"
                                                      "\n업데이트 일자: 2022.08.18 (ver 2.0)")
+
+
+# entry explain
+def ingredient_clear(event):
+    if ingredient_entry.get() == "재료이름을 입력해주세요":
+        ingredient_entry.delete(0, END)
+        ingredient_entry.config(fg="black")
+    if count_entry.get() == "":
+        count_entry.config(fg="gray")
+        count_entry.insert(0, "재료의 개수를 입력해주세요")
+    if position_entry.get() == "":
+        position_entry.config(fg="gray")
+        position_entry.insert(0, "재료의 위치를 입력해주세요")
+
+
+def count_clear(event):
+    if count_entry.get() == "재료의 개수를 입력해주세요":
+        count_entry.delete(0, END)
+        count_entry.config(fg="black")
+    if ingredient_entry.get() == "":
+        ingredient_entry.config(fg="gray")
+        ingredient_entry.insert(0, "재료이름을 입력해주세요")
+    if position_entry.get() == "":
+        position_entry.config(fg="gray")
+        position_entry.insert(0, "재료의 위치를 입력해주세요")
+
+
+def position_clear(event):
+    if position_entry.get() == "재료의 위치를 입력해주세요":
+        position_entry.delete(0, END)
+        position_entry.config(fg="black")
+    if ingredient_entry.get() == "":
+        ingredient_entry.config(fg="gray")
+        ingredient_entry.insert(0, "재료이름을 입력해주세요")
+    if count_entry.get() == "":
+        count_entry.config(fg="gray")
+        count_entry.insert(0, "재료의 개수를 입력해주세요")
 
 
 # base window
@@ -252,6 +295,10 @@ ingredient_entry.place(x=70, y=62)
 ingredient_entry.focus()
 ingredient_entry.bind("<Return>", enter_ingredient_entry)
 
+ingredient_entry.config(fg="gray")
+ingredient_entry.insert(0, "재료이름을 입력해주세요")
+ingredient_entry.bind('<ButtonRelease-1>', ingredient_clear)
+
 # count
 count_label = Label(text="개수:", font=("명조", 10, "bold"))
 count_label.place(x=0, y=110)
@@ -260,12 +307,20 @@ count_entry = Entry()
 count_entry.place(x=70, y=112)
 count_entry.bind("<Return>", enter_count_entry)
 
+count_entry.config(fg="gray")
+count_entry.insert(0, "재료의 개수를 입력해주세요")
+count_entry.bind('<ButtonRelease-1>', count_clear)
+
 # position
 position_label = Label(text="재료위치:", font=("명조", 10, "bold"))
 position_label.place(x=0, y=160)
 
 position_entry = Entry()
 position_entry.place(x=70, y=162)
+
+position_entry.config(fg="gray")
+position_entry.insert(0, "재료의 위치를 입력해주세요")
+position_entry.bind('<ButtonRelease-1>', position_clear)
 
 # button
 add_button = Button(text="추가", width=34, bg="white", command=add_click)
