@@ -180,6 +180,7 @@ def click_list_box(event):
 
         ingredient_entry.insert(0, ingredient)
         count_entry.insert(0, count)
+        count_entry.focus()
     except _tkinter.TclError:
         pass
 
@@ -200,6 +201,7 @@ def click_sold_out(event):
 
             ingredient_entry.insert(0, ingredient)
             count_entry.insert(0, count)
+            count_entry.focus()
     except _tkinter.TclError:
         pass
 
@@ -219,6 +221,7 @@ def click_under_3(event):
 
             ingredient_entry.insert(0, ingredient)
             count_entry.insert(0, count)
+            count_entry.focus()
     except _tkinter.TclError:
         pass
 
